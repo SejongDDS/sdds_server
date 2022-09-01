@@ -8,6 +8,7 @@ import { User } from "./user/entity/user.entity";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { UserDeploy } from "./user/entity/user_deploy.entity";
+import * as Joi from "joi";
 
 @Module({
   imports: [
@@ -17,6 +18,10 @@ import { UserDeploy } from "./user/entity/user_deploy.entity";
       envFilePath:
         process.env.NODE_ENV === "dev" ? ".development.env" : ".test.env",
       ignoreEnvFile: process.env.NODE_ENV === "prod" ?? false,
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid("dev", "prod").required(),
+        DATABASE_HOST: Joi.string().required(),
+      }),
     }),
     TypeOrmModule.forRoot({
       type: "mysql",
@@ -31,6 +36,7 @@ import { UserDeploy } from "./user/entity/user_deploy.entity";
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      include: [UserModule],
     }),
     UserModule,
   ],
