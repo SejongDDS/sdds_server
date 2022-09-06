@@ -43,9 +43,9 @@ export class UserService {
 
   async getAllUsers(): Promise<GetAllUserOutput> {
     const users = await this.userRepository.find();
-    console.log(users);
     return {
-      users: users,
+      ok: true,
+      users,
     };
   }
 }

@@ -20,7 +20,7 @@ export class User extends Core {
   login_id: string;
 
   @Column({ select: false })
-  @Field()
+  @Field({ description: "selection is false" })
   password: string;
 
   @Column()

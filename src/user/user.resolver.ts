@@ -17,8 +17,8 @@ export class UserResolver {
     return this.userService.signUp(createUserInput);
   }
 
-  @Query((returns) => User)
+  @Query((returns) => GetAllUserOutput)
   async getAllUser(): Promise<GetAllUserOutput> {
-    return await this.userService.getAllUsers();
+    return this.userService.getAllUsers();
   }
 }
