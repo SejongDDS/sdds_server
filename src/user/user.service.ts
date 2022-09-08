@@ -48,4 +48,13 @@ export class UserService {
       users,
     };
   }
+
+  async findUserForLogin(loginId: string): Promise<User> {
+    return await this.userRepository.findOne({
+      where: {
+        login_id: loginId,
+      },
+      select: ["id", "login_id", "password"],
+    });
+  }
 }

@@ -8,7 +8,9 @@ import { User } from "./user/entity/user.entity";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { UserDeploy } from "./user/entity/user_deploy.entity";
+import { AuthModule } from "./auth/auth.module";
 import * as Joi from "joi";
+import { JwtService } from "@nestjs/jwt";
 
 @Module({
   imports: [
@@ -36,11 +38,12 @@ import * as Joi from "joi";
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
-      include: [UserModule],
+      include: [UserModule, AuthModule],
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtService],
 })
 export class AppModule {}
