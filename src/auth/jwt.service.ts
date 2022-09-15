@@ -21,6 +21,7 @@ export class AuthJwtService {
       this.jwtService.signAsync(
         {
           user_id: input.id,
+          user_login_id: input.login_id,
         },
         {
           secret: "REFRESH_SECRET_KEY",

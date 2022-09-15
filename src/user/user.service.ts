@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { User } from "./entity/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -11,6 +11,8 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>
   ) {}
+
+  logger = new Logger(UserService.name);
 
   async signUp(createUserInput: CreateUserInput): Promise<CreateUserOutput> {
     try {
@@ -47,6 +49,18 @@ export class UserService {
       ok: true,
       users,
     };
+  }
+
+  async findUserById(userId: number): Promise<User> {
+    try {
+      return await this.userRepository.findOne({
+        where: {
+          id: userId,
+        },
+      });
+    } catch (err) {
+      this.logger.error(err);
+    }
   }
 
   async findUserForLogin(loginId: string): Promise<User> {

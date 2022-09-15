@@ -1,9 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import { UserService } from "../user/user.service";
+import { CookieOptions, Response } from "express";
 import * as bcrypt from "bcrypt";
 import { LoginOutput } from "./dto/login.dto";
 import { AuthJwtService } from "./jwt.service";
+import { CreateTokensOutput } from "./dto/create-tokens.dto";
+import Ctx from "../common/types/context.type";
 import { ref } from "joi";
+import { UpdateTokensOutput } from "./dto/update-tokens.dto";
+
+const cookieOptions: CookieOptions = {
+  domain: "localhost:3000",
+  httpOnly: false,
+  secure: false,
+  sameSite: true,
+  path: "/graphql",
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -40,6 +53,8 @@ export class AuthService {
           login_id: user.login_id,
         });
 
+      // user refresh token 저장
+
       return {
         ok: true,
         statusCode: 200,
@@ -52,5 +67,24 @@ export class AuthService {
         error: e,
       };
     }
+  }
+
+  async updateTokens(userId: number, ctx: Ctx): Promise<UpdateTokensOutput> {
+    const user = await this.userService.findUserById(userId);
+
+    const { access_token, refresh_token } =
+      await this.authJwtService.createTokens({
+        id: user.id,
+        login_id: user.login_id,
+      });
+
+    ctx.res.cookie("x-token", access_token, cookieOptions);
+    ctx.res.cookie("x-token-refresh", refresh_token, cookieOptions);
+
+    return {
+      ok: true,
+      accessToken: access_token,
+      refreshToken: refresh_token,
+    };
   }
 }

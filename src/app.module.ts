@@ -39,6 +39,13 @@ import { JwtService } from "@nestjs/jwt";
       driver: ApolloDriver,
       autoSchemaFile: true,
       include: [UserModule, AuthModule],
+      cors: {
+        credentials: "include",
+        origin: "http://localhost",
+      },
+      context: ({ req, res }) => {
+        return { req, res };
+      },
     }),
     UserModule,
     AuthModule,
