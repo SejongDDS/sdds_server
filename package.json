@@ -32,6 +32,7 @@
     "@nestjs/swagger": "^6.1.0",
     "@nestjs/typeorm": "^9.0.1",
     "apollo-server-express": "^3.10.2",
+    "aws-sdk": "^2.1220.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "cookie-parser": "^1.4.6",
