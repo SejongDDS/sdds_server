@@ -11,6 +11,7 @@ import { UserDeploy } from "./user/entity/user_deploy.entity";
 import { AuthModule } from "./auth/auth.module";
 import * as Joi from "joi";
 import { JwtService } from "@nestjs/jwt";
+import { WebsiteModule } from './api/website/website.module';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { JwtService } from "@nestjs/jwt";
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
-      include: [UserModule, AuthModule],
+      include: [UserModule, AuthModule, WebsiteModule],
       cors: {
         credentials: "include",
         origin: "http://localhost",
@@ -49,6 +50,7 @@ import { JwtService } from "@nestjs/jwt";
     }),
     UserModule,
     AuthModule,
+    WebsiteModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
