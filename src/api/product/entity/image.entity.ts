@@ -13,7 +13,7 @@ export class ProductImageEntity extends Core {
   @OneToOne((type) => ProductEntity, (product) => product.image, {
     onDelete: "CASCADE",
   })
-  product: ProductEntity;
+  product?: ProductEntity;
 
   @RelationId((self: ProductImageEntity) => self.product)
   product_id;

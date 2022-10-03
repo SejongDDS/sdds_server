@@ -41,6 +41,7 @@ export class ProductController {
   @HttpCode(HttpStatus.OK)
   async getProduct() {}
 
+  // todo : 토큰으로 소유자 확인 로직 추가
   @Post()
   // @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.CREATED)
