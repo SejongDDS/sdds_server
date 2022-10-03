@@ -16,6 +16,7 @@ import { ProductImageEntity } from "./api/product/entity/image.entity";
 import { CategoryEntity } from "./api/product/entity/category.entity";
 import { ProductModule } from "./api/product/product.module";
 import { WebsiteModule } from "./api/website/website.module";
+import { WebsiteEntity } from "./api/website/entity/website.entity";
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { WebsiteModule } from "./api/website/website.module";
         ProductEntity,
         ProductImageEntity,
         CategoryEntity,
+        WebsiteEntity,
       ],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({

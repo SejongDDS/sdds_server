@@ -57,6 +57,7 @@
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.13",
     "@types/jest": "28.1.4",
+    "@types/multer": "^1.4.7",
     "@types/node": "^16.11.59",
     "@types/passport-jwt": "^3.0.6",
     "@types/passport-local": "^1.0.34",

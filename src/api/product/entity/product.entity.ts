@@ -3,6 +3,7 @@ import { Core } from "../../../common/entity/core.entity";
 import { CategoryEntity } from "./category.entity";
 import { ProductImageEntity } from "./image.entity";
 import { WebsiteEntity } from "../../website/entity/website.entity";
+import { IsInt } from "class-validator";
 
 @Entity()
 export class ProductEntity extends Core {
@@ -10,9 +11,11 @@ export class ProductEntity extends Core {
   name: string;
 
   @Column("bigint", { default: 100 })
+  @IsInt()
   price: number;
 
   @Column("bigint", { default: 1 })
+  @IsInt()
   count: number;
 
   @ManyToOne((type) => CategoryEntity, (category) => category.products, {
@@ -35,4 +38,6 @@ export class ProductEntity extends Core {
     onDelete: "CASCADE",
   })
   website: WebsiteEntity;
+
+  // TODO : orders, carts 추가
 }

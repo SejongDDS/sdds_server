@@ -7,6 +7,8 @@ export class CategoryEntity extends Core {
   @Column("varchar")
   name: string;
 
-  @OneToMany((type) => ProductEntity, (product) => product.category)
-  products: ProductEntity;
+  @OneToMany((type) => ProductEntity, (product) => product.category, {
+    nullable: true,
+  })
+  products?: ProductEntity;
 }
