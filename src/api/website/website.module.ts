@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
-import { WebsiteService } from './website.service';
-import {WebsiteResolver} from "./website.resolver";
+import { Module } from "@nestjs/common";
+import { WebsiteService } from "./website.service";
+import { WebsiteResolver } from "./website.resolver";
+import { WebsiteController } from "./website.controller";
 
 @Module({
-  controllers: [],
-  providers: [WebsiteService, WebsiteResolver]
+  controllers: [WebsiteController],
+  providers: [WebsiteService, WebsiteResolver],
 })
 export class WebsiteModule {}

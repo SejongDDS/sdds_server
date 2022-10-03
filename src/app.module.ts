@@ -11,7 +11,11 @@ import { UserDeploy } from "./user/entity/user_deploy.entity";
 import { AuthModule } from "./auth/auth.module";
 import * as Joi from "joi";
 import { JwtService } from "@nestjs/jwt";
-import { WebsiteModule } from './api/website/website.module';
+import { ProductEntity } from "./api/product/entity/product.entity";
+import { ProductImageEntity } from "./api/product/entity/image.entity";
+import { CategoryEntity } from "./api/product/entity/category.entity";
+import { ProductModule } from "./api/product/product.module";
+import { WebsiteModule } from "./api/website/website.module";
 
 @Module({
   imports: [
@@ -33,13 +37,19 @@ import { WebsiteModule } from './api/website/website.module';
       username: process.env.DATABASE_USER_NAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE,
-      synchronize: process.env.NODE_ENV === "prod",
-      entities: [User, UserDeploy],
+      synchronize: process.env.NODE_ENV !== "prod",
+      entities: [
+        User,
+        UserDeploy,
+        ProductEntity,
+        ProductImageEntity,
+        CategoryEntity,
+      ],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
-      include: [UserModule, AuthModule, WebsiteModule],
+      include: [UserModule, AuthModule],
       cors: {
         credentials: "include",
         origin: "http://localhost",
@@ -50,6 +60,7 @@ import { WebsiteModule } from './api/website/website.module';
     }),
     UserModule,
     AuthModule,
+    ProductModule,
     WebsiteModule,
   ],
   controllers: [AppController],
