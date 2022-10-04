@@ -51,12 +51,18 @@ export class UserService {
     };
   }
 
+  async getUser(userId: number) {
+    const user = await this.findUserById(userId);
+    return user;
+  }
+
   async findUserById(userId: number): Promise<User> {
     try {
       return await this.userRepository.findOne({
         where: {
           id: userId,
         },
+        select: ["websites"],
       });
     } catch (err) {
       this.logger.error(err);
