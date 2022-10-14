@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne, RelationId } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, RelationId } from "typeorm";
 import { Core } from "../../../common/entity/core.entity";
 import { ProductEntity } from "./product.entity";
 
@@ -8,11 +8,12 @@ export class ProductImageEntity extends Core {
   thumbnail_url?: string;
 
   @Column("varchar", { nullable: true })
-  main_url?: string;
+  main_url: string;
 
   @OneToOne((type) => ProductEntity, (product) => product.image, {
     onDelete: "CASCADE",
   })
+  @JoinColumn()
   product?: ProductEntity;
 
   @RelationId((self: ProductImageEntity) => self.product)
