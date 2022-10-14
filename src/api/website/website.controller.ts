@@ -30,6 +30,7 @@ export class WebsiteController {
     summary: "웹사이트 생성 API",
     description: "Authorization Bearer 헤더에 추가",
   })
+  @ApiBearerAuth()
   @ApiCreatedResponse({
     type: CreateWebsiteOutput,
   })
@@ -37,6 +38,6 @@ export class WebsiteController {
     @Req() req,
     @Body() input: CreateWebsiteInput
   ): Promise<CreateWebsiteOutput> {
-    return await this.websiteService.createWebsite(req.user.id, input);
+    return await this.websiteService.createWebsite(req.user.user_id, input);
   }
 }

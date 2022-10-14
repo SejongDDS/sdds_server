@@ -15,7 +15,7 @@ export class AuthJwtService {
         },
         {
           secret: "ACCESS_SECRET_KEY",
-          expiresIn: "1d",
+          expiresIn: "30d",
         }
       ),
       this.jwtService.signAsync(

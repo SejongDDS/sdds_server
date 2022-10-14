@@ -30,6 +30,7 @@ export class User extends Core {
 
   @OneToMany((type) => WebsiteEntity, (website) => website.owner, {
     nullable: true,
+    cascade: true,
   })
   websites?: WebsiteEntity[];
 

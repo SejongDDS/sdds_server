@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsIn, IsInt, IsString } from "class-validator";
+import { CoreOutput } from "../../common/dto/out-put.dto";
 
 export class CreateProductInput {
   @ApiProperty({ description: "상품 이름" })
@@ -29,6 +30,8 @@ export class CreateProductInput {
   @IsString({ message: "should be string only char" })
   category_name: string;
 }
+
+export class CreateProductOutput extends CoreOutput {}
 
 export class UploadFiles {
   @ApiProperty({ description: "메인 상품 이미지" })

@@ -1,7 +1,11 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { ProductEntity } from "./entity/product.entity";
-import { CreateProductInput, UploadFiles } from "./product.interface";
+import {
+  CreateProductInput,
+  CreateProductOutput,
+  UploadFiles,
+} from "./product.interface";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CategoryService } from "./category.service";
 import { ProductImageService } from "./product-image.service";
@@ -18,7 +22,11 @@ export class ProductService {
   ) {}
   private readonly logger = new Logger(ProductService.name);
 
-  async createProduct(files: UploadFiles, input: CreateProductInput) {
+  async createProduct(
+    userId: number,
+    files: UploadFiles,
+    input: CreateProductInput
+  ): Promise<CreateProductOutput> {
     try {
       // 카테고리 생성
       const category = await this.categoryService.findCategory(
@@ -28,32 +36,51 @@ export class ProductService {
       const website = await this.websiteService.findWebsiteByUrl(
         input.website_url
       );
-      if (!website) {
+      if (!website || website.owner_id !== userId) {
         this.logger.error(`${input.website_url} is not found`);
         return {
           ok: false,
           error: new NotFoundException(),
+          statusCode: 401,
         };
       }
-      // 이미지 업로드
+
       const image = await this.imageService.createImage(
         files,
         input.website_url
       );
+
       // 상품 생성
       const product = this.productRepository.create({
         name: input.name,
         price: +input.price,
         count: +input.count,
         category: category,
-        image: image,
         website: website,
+        image: image,
       });
-      return await this.productRepository.save(product);
+      await this.productRepository.save(product);
+
+      // 이미지 업로드
+      image.product = product;
+      await this.imageService.updateImageEntity(image);
+
+      // 웹사이트 업데이트
+      if (!website.products) {
+        website.products = [];
+      }
+      website.products.push(product);
+      await this.websiteService.updateWebsiteEntity(website);
+
+      return {
+        ok: true,
+        statusCode: 200,
+      };
     } catch (e) {
       this.logger.error(e);
       return {
         ok: false,
+        statusCode: 500,
         error: e,
       };
     }

@@ -12,6 +12,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOkResponse,
   ApiOperation,
@@ -23,7 +24,11 @@ import {
   FileFieldsInterceptor,
   FileInterceptor,
 } from "@nestjs/platform-express";
-import { CreateProductInput, UploadFiles } from "./product.interface";
+import {
+  CreateProductInput,
+  CreateProductOutput,
+  UploadFiles,
+} from "./product.interface";
 import { ProductService } from "./product.service";
 
 @Controller("product")
@@ -45,6 +50,8 @@ export class ProductController {
   @Post()
   // @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth()
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: "main_image", maxCount: 1 },
@@ -55,15 +62,20 @@ export class ProductController {
     summary: "상품 추가 API",
     description: `Form-Data 형식으로 보내야 하고 main_image(필수)와 thumbnail_image(옵션)도 추가해서 보내야함`,
   })
-  @ApiBody({ type: CreateProductInput || UploadFiles })
-  @ApiOkResponse()
+  @ApiOkResponse({
+    type: CreateProductOutput,
+  })
   async createProduct(
     @Req() request,
     @UploadedFiles()
     files: UploadFiles,
     @Body() input: CreateProductInput
-  ) {
-    return this.productService.createProduct(files, input);
+  ): Promise<CreateProductOutput> {
+    return this.productService.createProduct(
+      request.user.user_id,
+      files,
+      input
+    );
   }
 
   @Post("/:product_id")

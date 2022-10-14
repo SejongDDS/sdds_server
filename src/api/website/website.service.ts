@@ -25,6 +25,7 @@ export class WebsiteService {
         website_url: input.website_url,
       });
       website.owner = user;
+      website.products = [];
 
       const newWebsite = await this.websiteRepository.save(website);
       this.logger.verbose(`create New Website ${JSON.stringify(newWebsite)}`);
@@ -45,6 +46,7 @@ export class WebsiteService {
       where: {
         website_url: url,
       },
+      select: ["owner", "products"],
     });
 
     if (!website) {
@@ -52,5 +54,9 @@ export class WebsiteService {
     }
 
     return website;
+  }
+
+  async updateWebsiteEntity(website: WebsiteEntity) {
+    return await this.websiteRepository.save(website);
   }
 }

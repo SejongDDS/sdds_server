@@ -3,18 +3,19 @@ import { Core } from "../../../common/entity/core.entity";
 import { CategoryEntity } from "./category.entity";
 import { ProductImageEntity } from "./image.entity";
 import { WebsiteEntity } from "../../website/entity/website.entity";
-import { IsInt } from "class-validator";
+import { IsInt, IsString } from "class-validator";
 
 @Entity()
 export class ProductEntity extends Core {
-  @Column("varchar")
+  @Column()
+  @IsString()
   name: string;
 
-  @Column("bigint", { default: 100 })
+  @Column()
   @IsInt()
   price: number;
 
-  @Column("bigint", { default: 1 })
+  @Column()
   @IsInt()
   count: number;
 
