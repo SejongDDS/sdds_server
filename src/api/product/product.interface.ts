@@ -19,7 +19,7 @@ export class CreateProductInput {
     description: "상품 갯수 / 서버에서 Type 변환",
     default: "1",
   })
-  @IsString({ message: "should be number" })
+  @IsString({ message: "should be string" })
   count: number;
 
   @ApiProperty({ description: "웹 사이트 URL" })

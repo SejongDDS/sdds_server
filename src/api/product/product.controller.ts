@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Req,
   UploadedFiles,
@@ -30,6 +31,7 @@ import {
   UploadFiles,
 } from "./product.interface";
 import { ProductService } from "./product.service";
+import { UpdateProductInput } from "./dto/update-product.dto";
 
 @Controller("product")
 @ApiTags("상품 API")
@@ -80,7 +82,24 @@ export class ProductController {
 
   @Post("/:product_id")
   @HttpCode(HttpStatus.OK)
-  async updateProduct() {}
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "상품 수정 API",
+    description: `이미지를 제외한 상품 정보 수정`,
+  })
+  async updateProductWithoutImage(
+    @Req() req,
+    @Body() input: UpdateProductInput,
+    @Param("product_id") product_id
+  ) {
+    const { user_id } = req.user;
+    return this.productService.updateProductWithoutImage(
+      user_id,
+      product_id,
+      input
+    );
+  }
 
   @Delete()
   @HttpCode(HttpStatus.OK)

@@ -1,4 +1,12 @@
-import { Column, Entity, ManyToOne, OneToOne, RelationId } from "typeorm";
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  RelationId,
+} from "typeorm";
 import { Core } from "../../../common/entity/core.entity";
 import { CategoryEntity } from "./category.entity";
 import { ProductImageEntity } from "./image.entity";
@@ -41,4 +49,16 @@ export class ProductEntity extends Core {
   website: WebsiteEntity;
 
   // TODO : orders, carts 추가
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  convertStringToNumber() {
+    if (typeof this.count === "string") {
+      this.count = +this.count;
+    }
+
+    if (typeof this.price === "string") {
+      this.price = +this.price;
+    }
+  }
 }

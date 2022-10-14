@@ -38,7 +38,7 @@ import { WebsiteEntity } from "./api/website/entity/website.entity";
       username: process.env.DATABASE_USER_NAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE,
-      synchronize: process.env.NODE_ENV !== "prod",
+      synchronize: true,
       entities: [
         User,
         UserDeploy,

@@ -10,6 +10,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CategoryService } from "./category.service";
 import { ProductImageService } from "./product-image.service";
 import { WebsiteService } from "../website/website.service";
+import {
+  UpdateProductInput,
+  UpdateProductOutput,
+} from "./dto/update-product.dto";
 
 @Injectable()
 export class ProductService {
@@ -20,6 +24,7 @@ export class ProductService {
     private readonly imageService: ProductImageService,
     private readonly websiteService: WebsiteService
   ) {}
+
   private readonly logger = new Logger(ProductService.name);
 
   async createProduct(
@@ -83,6 +88,53 @@ export class ProductService {
         statusCode: 500,
         error: e,
       };
+    }
+  }
+
+  async updateProductWithoutImage(
+    userId: number,
+    productId: number,
+    input: UpdateProductInput
+  ): Promise<UpdateProductOutput> {
+    try {
+      const { website_url, ...updateInput } = input;
+      const website = await this.websiteService.findWebsiteByUrl(website_url);
+
+      if (!website || (website && website.owner_id !== userId)) {
+        return {
+          ok: false,
+          error: "You can't access this website's product",
+        };
+      }
+
+      const product = await this.productRepository.findOne({
+        where: {
+          id: productId,
+          website: {
+            id: website.id,
+          },
+        },
+      });
+
+      if (!product) {
+        return {
+          ok: false,
+          error: "Not Found Product",
+        };
+      }
+
+      const newProduct = this.productRepository.create({
+        ...product,
+        ...updateInput,
+      });
+
+      await this.productRepository.save(newProduct);
+      return {
+        ok: true,
+        product: newProduct,
+      };
+    } catch (e) {
+      this.logger.error(e);
     }
   }
 }
