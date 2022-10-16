@@ -14,6 +14,7 @@ import {
   UpdateProductInput,
   UpdateProductOutput,
 } from "./dto/update-product.dto";
+import { IPagination } from "../../common/pagination/pagination.interface";
 
 @Injectable()
 export class ProductService {
@@ -27,6 +28,38 @@ export class ProductService {
 
   private readonly logger = new Logger(ProductService.name);
 
+  async getProducts(
+    websiteUrl: string,
+    options: IPagination
+  ): Promise<ProductEntity[] | NotFoundException> {
+    try {
+      const { order, take, skip } = options;
+      const product = await this.productRepository.find({
+        where: {
+          website: {
+            website_url: websiteUrl,
+          },
+        },
+        relations: ["website"],
+        order: {
+          created_at: order,
+        },
+        skip: skip,
+        take: take,
+      });
+
+      return product;
+    } catch (e) {
+      this.logger.error(e);
+    }
+  }
+
+  /**
+   * 상품 추가 Service
+   * @param userId
+   * @param files
+   * @param input
+   */
   async createProduct(
     userId: number,
     files: UploadFiles,
@@ -91,6 +124,12 @@ export class ProductService {
     }
   }
 
+  /**
+   * 상품 수정 Service
+   * @param userId
+   * @param productId
+   * @param input
+   */
   async updateProductWithoutImage(
     userId: number,
     productId: number,
@@ -138,6 +177,12 @@ export class ProductService {
     }
   }
 
+  /**
+   * 상품 삭제 Service
+   * @param userId
+   * @param projectId
+   * @param websiteUrl
+   */
   async deleteProduct(userId: number, projectId: number, websiteUrl: string) {
     try {
       const website = await this.websiteService.findWebsiteByUrl(websiteUrl);

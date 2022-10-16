@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -35,16 +36,55 @@ import {
 } from "./product.interface";
 import { ProductService } from "./product.service";
 import { UpdateProductInput } from "./dto/update-product.dto";
+import { IPagination } from "../../common/pagination/pagination.interface";
+import { getDefaultQuery } from "../../common/pagination/pagination.util";
+import { ProductEntity } from "./entity/product.entity";
 
 @Controller("product")
 @ApiTags("상품 API")
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get()
+  /**
+   *
+   * @param url
+   * @param query
+   */
+  @Get("/:website_url")
   @HttpCode(HttpStatus.OK)
-  async getAllProducts() {
-    return "hello";
+  @ApiOperation({
+    summary: "상품 전체 조회 API",
+  })
+  @ApiParam({
+    name: "website_url",
+    type: "string",
+    description: "해당 웹사이트 URL",
+  })
+  @ApiQuery({
+    name: "order",
+    required: false,
+    description: `"ASC" | "DESC" | "asc" | "desc", default: "DESC"`,
+    type: "string",
+  })
+  @ApiQuery({
+    name: "skip",
+    type: "number",
+    required: false,
+    description:
+      "skip is offset from where entities should be taken // default : 0",
+  })
+  @ApiQuery({
+    name: "take",
+    type: "number",
+    required: false,
+    description: "skip is limit // default : 15",
+  })
+  async getAllProducts(
+    @Param("website_url") url,
+    @Query() query: IPagination
+  ): Promise<ProductEntity[] | NotFoundException> {
+    const options = getDefaultQuery(query);
+    return await this.productService.getProducts(url, options);
   }
 
   @Get()
