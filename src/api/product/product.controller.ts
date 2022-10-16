@@ -46,14 +46,14 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   /**
-   *
+   * 상품 전체 조회 API
    * @param url
    * @param query
    */
   @Get("/:website_url")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: "상품 전체 조회 API",
+    summary: "상품 전체 목록 조회 API",
   })
   @ApiParam({
     name: "website_url",
@@ -79,6 +79,9 @@ export class ProductController {
     required: false,
     description: "skip is limit // default : 15",
   })
+  @ApiOkResponse({
+    description: "Return Type is ProductEntity[]",
+  })
   async getAllProducts(
     @Param("website_url") url,
     @Query() query: IPagination
@@ -87,9 +90,28 @@ export class ProductController {
     return await this.productService.getProducts(url, options);
   }
 
-  @Get()
+  /**
+   * 상품 1개 조회
+   * @param url
+   * @param productId
+   */
+  @Get("/:website_url/:product_id")
   @HttpCode(HttpStatus.OK)
-  async getProduct() {}
+  @ApiOperation({
+    summary: "상품 1개 조회 API",
+  })
+  @ApiParam({
+    name: "website_url",
+  })
+  @ApiParam({
+    name: "product_id",
+  })
+  @ApiOkResponse({
+    type: ProductEntity,
+  })
+  async getProduct(@Param("website_url") url, @Param("product_id") productId) {
+    return await this.productService.getAProduct(url, productId);
+  }
 
   /**
    * 상품 추가 API

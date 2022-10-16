@@ -4,12 +4,14 @@ import * as bcrypt from "bcrypt";
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Core } from "../../../common/entity/core.entity";
 import { WebsiteEntity } from "../../website/entity/website.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
 @Entity()
 @ObjectType({ isAbstract: true })
 export class User extends Core {
   @Column()
   @Field({ description: "로그인 시 아이디" })
+  @ApiProperty()
   login_id: string;
 
   @Column({ select: false })
@@ -18,10 +20,12 @@ export class User extends Core {
 
   @Column()
   @Field()
+  @ApiProperty()
   phone_number: string;
 
   @Column()
   @Field()
+  @ApiProperty()
   email: string;
 
   @Column({ select: false, nullable: true })

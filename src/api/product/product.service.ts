@@ -28,6 +28,11 @@ export class ProductService {
 
   private readonly logger = new Logger(ProductService.name);
 
+  /**
+   * 전체 상품 목록 조회
+   * @param websiteUrl
+   * @param options
+   */
   async getProducts(
     websiteUrl: string,
     options: IPagination
@@ -47,6 +52,28 @@ export class ProductService {
         skip: skip,
         take: take,
       });
+
+      return product;
+    } catch (e) {
+      this.logger.error(e);
+    }
+  }
+
+  async getAProduct(url: string, productId: number) {
+    try {
+      const product = await this.productRepository.findOne({
+        where: {
+          id: productId,
+          website: {
+            website_url: url,
+          },
+        },
+        relations: ["category", "image", "website"],
+      });
+
+      if (!product) {
+        return new NotFoundException();
+      }
 
       return product;
     } catch (e) {
