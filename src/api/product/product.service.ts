@@ -137,4 +137,34 @@ export class ProductService {
       this.logger.error(e);
     }
   }
+
+  async deleteProduct(userId: number, projectId: number, websiteUrl: string) {
+    try {
+      const website = await this.websiteService.findWebsiteByUrl(websiteUrl);
+      const product = await this.productRepository.findOne({
+        where: {
+          id: projectId,
+        },
+        relations: ["website"],
+      });
+
+      if (
+        website.owner_id !== userId ||
+        product.website.website_url !== websiteUrl
+      ) {
+        return {
+          ok: false,
+          error:
+            "해당 상품의 권한이 없거나, 상품 URL 과 요청한 URL 이 일치하지 않습니다.",
+        };
+      }
+
+      await this.productRepository.delete(product.id);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      this.logger.error(e);
+    }
+  }
 }

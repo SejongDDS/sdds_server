@@ -42,16 +42,12 @@ export class WebsiteService {
   }
 
   async findWebsiteByUrl(url: string): Promise<WebsiteEntity> {
-    const website = this.websiteRepository.findOne({
+    const website = await this.websiteRepository.findOne({
       where: {
         website_url: url,
       },
-      select: ["owner", "products"],
+      relations: ["owner", "products"],
     });
-
-    if (!website) {
-      return null;
-    }
 
     return website;
   }

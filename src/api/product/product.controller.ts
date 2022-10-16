@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   Req,
   UploadedFiles,
   UseGuards,
@@ -17,6 +18,8 @@ import {
   ApiBody,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
@@ -48,9 +51,13 @@ export class ProductController {
   @HttpCode(HttpStatus.OK)
   async getProduct() {}
 
-  // todo : 토큰으로 소유자 확인 로직 추가
+  /**
+   * 상품 추가 API
+   * @param request
+   * @param files
+   * @param input
+   */
   @Post()
-  // @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtGuard)
   @ApiBearerAuth()
@@ -80,6 +87,12 @@ export class ProductController {
     );
   }
 
+  /**
+   * 상품 수정 API
+   * @param req
+   * @param input
+   * @param product_id
+   */
   @Post("/:product_id")
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtGuard)
@@ -101,7 +114,37 @@ export class ProductController {
     );
   }
 
-  @Delete()
+  /**
+   * 상품 삭제 API
+   * @param req
+   * @param projectId
+   * @param websiteUrl
+   */
+  @Delete("/:product_id")
   @HttpCode(HttpStatus.OK)
-  async deleteProduct() {}
+  @UseGuards(JwtGuard)
+  @ApiParam({
+    name: "프로젝트 id",
+    type: "number",
+  })
+  @ApiOperation({
+    summary: "상품 삭제 API",
+    description: "상품 삭제",
+  })
+  @ApiQuery({
+    name: "website_url",
+    type: "string",
+  })
+  async deleteProduct(
+    @Req() req,
+    @Param("project_id") projectId,
+    @Query("website_url") websiteUrl
+  ) {
+    const { user_id } = req.user;
+    return await this.productService.deleteProduct(
+      user_id,
+      projectId,
+      websiteUrl
+    );
+  }
 }
