@@ -1,16 +1,22 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { UserModule } from "./user/user.module";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "./user/entity/user.entity";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
-import { UserDeploy } from "./user/entity/user_deploy.entity";
-import { AuthModule } from "./auth/auth.module";
 import * as Joi from "joi";
 import { JwtService } from "@nestjs/jwt";
+import { ProductEntity } from "./api/product/entity/product.entity";
+import { ProductImageEntity } from "./api/product/entity/image.entity";
+import { CategoryEntity } from "./api/product/entity/category.entity";
+import { ProductModule } from "./api/product/product.module";
+import { WebsiteModule } from "./api/website/website.module";
+import { WebsiteEntity } from "./api/website/entity/website.entity";
+import { AuthModule } from "./api/auth/auth.module";
+import { User } from "./api/user/entity/user.entity";
+import { UserDeploy } from "./api/user/entity/user_deploy.entity";
+import { UserModule } from "./api/user/user.module";
 
 @Module({
   imports: [
@@ -32,8 +38,15 @@ import { JwtService } from "@nestjs/jwt";
       username: process.env.DATABASE_USER_NAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE,
-      synchronize: process.env.NODE_ENV === "prod",
-      entities: [User, UserDeploy],
+      synchronize: true,
+      entities: [
+        User,
+        UserDeploy,
+        ProductEntity,
+        ProductImageEntity,
+        CategoryEntity,
+        WebsiteEntity,
+      ],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -49,6 +62,8 @@ import { JwtService } from "@nestjs/jwt";
     }),
     UserModule,
     AuthModule,
+    ProductModule,
+    WebsiteModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

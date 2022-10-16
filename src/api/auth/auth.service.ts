@@ -1,13 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { UserService } from "../user/user.service";
 import { CookieOptions, Response } from "express";
 import * as bcrypt from "bcrypt";
 import { LoginOutput } from "./dto/login.dto";
 import { AuthJwtService } from "./jwt.service";
-import { CreateTokensOutput } from "./dto/create-tokens.dto";
-import Ctx from "../common/types/context.type";
-import { ref } from "joi";
 import { UpdateTokensOutput } from "./dto/update-tokens.dto";
+import Ctx from "../../common/types/context.type";
+import { UserService } from "../user/user.service";
 
 const cookieOptions: CookieOptions = {
   domain: "localhost:3000",

@@ -1,5 +1,5 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { CoreOutput } from "../../common/dto/out-put.dto";
+import { CoreOutput } from "../../../common/dto/out-put.dto";
 
 @InputType()
 export class LoginInput {

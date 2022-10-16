@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType, PickType } from "@nestjs/graphql";
 import { User } from "../entity/user.entity";
-import { CoreOutput } from "../../common/dto/out-put.dto";
+import { CoreOutput } from "../../../common/dto/out-put.dto";
 
 @InputType()
 export class CreateUserInput {
