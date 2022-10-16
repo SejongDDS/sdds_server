@@ -30,6 +30,7 @@ async function bootstrap() {
     .setDescription("SDDS API 문서")
     .setVersion("1.0")
     .addTag("SDDS")
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("doc", app, document);
