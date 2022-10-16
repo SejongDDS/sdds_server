@@ -1,14 +1,10 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { UserModule } from "./user/user.module";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "./user/entity/user.entity";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
-import { UserDeploy } from "./user/entity/user_deploy.entity";
-import { AuthModule } from "./auth/auth.module";
 import * as Joi from "joi";
 import { JwtService } from "@nestjs/jwt";
 import { ProductEntity } from "./api/product/entity/product.entity";
@@ -17,6 +13,10 @@ import { CategoryEntity } from "./api/product/entity/category.entity";
 import { ProductModule } from "./api/product/product.module";
 import { WebsiteModule } from "./api/website/website.module";
 import { WebsiteEntity } from "./api/website/entity/website.entity";
+import { AuthModule } from "./api/auth/auth.module";
+import { User } from "./api/user/entity/user.entity";
+import { UserDeploy } from "./api/user/entity/user_deploy.entity";
+import { UserModule } from "./api/user/user.module";
 
 @Module({
   imports: [

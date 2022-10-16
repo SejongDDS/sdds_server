@@ -2,8 +2,8 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
 
 import * as bcrypt from "bcrypt";
 import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
-import { Core } from "../../common/entity/core.entity";
-import { WebsiteEntity } from "../../api/website/entity/website.entity";
+import { Core } from "../../../common/entity/core.entity";
+import { WebsiteEntity } from "../../website/entity/website.entity";
 
 @Entity()
 @ObjectType({ isAbstract: true })

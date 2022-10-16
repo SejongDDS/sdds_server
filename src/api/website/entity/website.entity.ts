@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { Core } from "../../../common/entity/core.entity";
 import { ProductEntity } from "../../product/entity/product.entity";
-import { User } from "../../../user/entity/user.entity";
+import { User } from "../../user/entity/user.entity";
 
 @Entity()
 export class WebsiteEntity extends Core {

@@ -2,8 +2,8 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { WebsiteEntity } from "./entity/website.entity";
 import { Repository } from "typeorm";
-import { UserService } from "../../user/user.service";
 import { CreateWebsiteInput, CreateWebsiteOutput } from "./website.interface";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class WebsiteService {

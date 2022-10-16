@@ -23,7 +23,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { JwtGuard } from "../../auth/guards/jwt.guard";
+import { JwtGuard } from "../auth/guards/jwt.guard";
 import {
   FileFieldsInterceptor,
   FileInterceptor,

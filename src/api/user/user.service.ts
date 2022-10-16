@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { Repository } from "typeorm";
-import { User } from "./entity/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserInput, CreateUserOutput } from "./dto/sign-up.dto";
+import { User } from "./entity/user.entity";
 import { GetAllUserOutput } from "./dto/get-all-user.dto";
 
 @Injectable()
