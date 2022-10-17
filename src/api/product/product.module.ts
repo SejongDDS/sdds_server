@@ -8,6 +8,7 @@ import { ProductEntity } from "./entity/product.entity";
 import { ProductImageEntity } from "./entity/image.entity";
 import { CategoryEntity } from "./entity/category.entity";
 import { WebsiteModule } from "../website/website.module";
+import { OrdersEntity } from "../orders/entity/orders.entity";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { WebsiteModule } from "../website/website.module";
       ProductEntity,
       ProductImageEntity,
       CategoryEntity,
+      OrdersEntity,
     ]),
     WebsiteModule,
   ],
