@@ -45,7 +45,7 @@ export class ProductService {
             website_url: websiteUrl,
           },
         },
-        relations: ["website"],
+        relations: ["website", "orders"],
         order: {
           created_at: order,
         },
@@ -68,7 +68,7 @@ export class ProductService {
             website_url: url,
           },
         },
-        relations: ["category", "image", "website"],
+        relations: ["category", "image", "website", "orders"],
       });
 
       if (!product) {
@@ -123,6 +123,7 @@ export class ProductService {
         category: category,
         website: website,
         image: image,
+        orders: [],
       });
       await this.productRepository.save(product);
 

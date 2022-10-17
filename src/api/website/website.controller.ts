@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -39,5 +40,13 @@ export class WebsiteController {
     @Body() input: CreateWebsiteInput
   ): Promise<CreateWebsiteOutput> {
     return await this.websiteService.createWebsite(req.user.user_id, input);
+  }
+
+  @Get()
+  @UseGuards(JwtGuard)
+  @HttpCode(HttpStatus.OK)
+  async getMyWebsites(@Req() req) {
+    const { user_id } = req.user;
+    return await this.websiteService.getMyWebsites(user_id);
   }
 }

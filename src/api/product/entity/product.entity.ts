@@ -66,6 +66,9 @@ export class ProductEntity extends Core {
   @ApiProperty()
   orders?: OrdersEntity[];
 
+  @RelationId((self: ProductEntity) => self.orders)
+  orders_id: number;
+
   @BeforeInsert()
   @BeforeUpdate()
   convertStringToNumber() {

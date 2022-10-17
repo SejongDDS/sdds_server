@@ -25,9 +25,9 @@ export class OrdersEntity extends Core {
   @ApiProperty({ type: "string", description: "배송지 주소" })
   shipping_address: string;
 
-  @Column({ type: "json" })
+  @Column({ type: "json", nullable: true })
   @ApiProperty({ type: "json | null", description: "기타 정보" })
-  etc: any;
+  etc?: any;
 
   @ManyToOne((type) => ProductEntity, (product) => product.orders, {
     onDelete: "CASCADE",
@@ -41,21 +41,18 @@ export class OrdersEntity extends Core {
 
   @ManyToOne((type) => User, (user) => user.orders, {
     onDelete: "CASCADE",
+    nullable: true,
   })
   @ApiProperty()
-  buyer: User;
+  buyer?: User;
 
   @RelationId((self: OrdersEntity) => self.buyer)
   @ApiProperty()
-  buyer_id: number;
+  buyer_id?: number;
 
   @ManyToOne((type) => WebsiteEntity, (website) => website.orders, {
     onDelete: "CASCADE",
   })
   @ApiProperty()
   website: WebsiteEntity;
-
-  @RelationId((self: OrdersEntity) => self.website)
-  @ApiProperty()
-  website_id: number;
 }
