@@ -32,27 +32,25 @@ export class OrdersEntity extends Core {
   @ManyToOne((type) => ProductEntity, (product) => product.orders, {
     onDelete: "CASCADE",
   })
-  @ApiProperty()
+  @ApiProperty({ type: () => ProductEntity })
   product: ProductEntity;
 
   @RelationId((self: OrdersEntity) => self.product)
-  @ApiProperty()
   product_id: number;
 
   @ManyToOne((type) => User, (user) => user.orders, {
     onDelete: "CASCADE",
     nullable: true,
   })
-  @ApiProperty()
+  @ApiProperty({ type: () => User })
   buyer?: User;
 
   @RelationId((self: OrdersEntity) => self.buyer)
-  @ApiProperty()
   buyer_id?: number;
 
   @ManyToOne((type) => WebsiteEntity, (website) => website.orders, {
     onDelete: "CASCADE",
   })
-  @ApiProperty()
+  @ApiProperty({ type: () => WebsiteEntity })
   website: WebsiteEntity;
 }
