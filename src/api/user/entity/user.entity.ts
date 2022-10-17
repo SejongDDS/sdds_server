@@ -5,6 +5,7 @@ import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { Core } from "../../../common/entity/core.entity";
 import { WebsiteEntity } from "../../website/entity/website.entity";
 import { ApiProperty } from "@nestjs/swagger";
+import { OrdersEntity } from "../../orders/entity/orders.entity";
 
 @Entity()
 @ObjectType({ isAbstract: true })
@@ -37,6 +38,13 @@ export class User extends Core {
     cascade: true,
   })
   websites?: WebsiteEntity[];
+
+  @OneToMany((type) => OrdersEntity, (orders) => orders.product, {
+    nullable: true,
+    cascade: true,
+  })
+  @ApiProperty()
+  orders?: OrdersEntity[];
 
   @BeforeInsert()
   @BeforeUpdate()

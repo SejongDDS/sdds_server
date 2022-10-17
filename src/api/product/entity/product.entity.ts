@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   OneToOne,
   RelationId,
 } from "typeorm";
@@ -13,6 +14,7 @@ import { ProductImageEntity } from "./image.entity";
 import { WebsiteEntity } from "../../website/entity/website.entity";
 import { IsInt, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
+import { OrdersEntity } from "../../orders/entity/orders.entity";
 
 @Entity()
 export class ProductEntity extends Core {
@@ -56,6 +58,16 @@ export class ProductEntity extends Core {
   website: WebsiteEntity;
 
   // TODO : orders, carts 추가
+
+  @OneToMany((type) => OrdersEntity, (orders) => orders.product, {
+    nullable: true,
+    cascade: true,
+  })
+  @ApiProperty()
+  orders?: OrdersEntity[];
+
+  @RelationId((self: ProductEntity) => self.orders)
+  orders_id: number;
 
   @BeforeInsert()
   @BeforeUpdate()

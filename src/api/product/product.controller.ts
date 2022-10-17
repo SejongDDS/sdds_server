@@ -39,6 +39,7 @@ import { UpdateProductInput } from "./dto/update-product.dto";
 import { IPagination } from "../../common/pagination/pagination.interface";
 import { getDefaultQuery } from "../../common/pagination/pagination.util";
 import { ProductEntity } from "./entity/product.entity";
+import { DocumentPagination } from "../../common/pagination/pagination.decorator";
 
 @Controller("product")
 @ApiTags("상품 API")
@@ -60,25 +61,7 @@ export class ProductController {
     type: "string",
     description: "해당 웹사이트 URL",
   })
-  @ApiQuery({
-    name: "order",
-    required: false,
-    description: `"ASC" | "DESC" | "asc" | "desc", default: "DESC"`,
-    type: "string",
-  })
-  @ApiQuery({
-    name: "skip",
-    type: "number",
-    required: false,
-    description:
-      "skip is offset from where entities should be taken // default : 0",
-  })
-  @ApiQuery({
-    name: "take",
-    type: "number",
-    required: false,
-    description: "skip is limit // default : 15",
-  })
+  @DocumentPagination()
   @ApiOkResponse({
     description: "Return Type is ProductEntity[]",
   })

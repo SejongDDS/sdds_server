@@ -8,6 +8,8 @@ import { ProductEntity } from "./entity/product.entity";
 import { ProductImageEntity } from "./entity/image.entity";
 import { CategoryEntity } from "./entity/category.entity";
 import { WebsiteModule } from "../website/website.module";
+import { OrdersEntity } from "../orders/entity/orders.entity";
+import { ProductRepositoryService } from "./product-repository.service";
 
 @Module({
   imports: [
@@ -15,10 +17,17 @@ import { WebsiteModule } from "../website/website.module";
       ProductEntity,
       ProductImageEntity,
       CategoryEntity,
+      OrdersEntity,
     ]),
     WebsiteModule,
   ],
-  providers: [ProductService, CategoryService, ProductImageService],
+  providers: [
+    ProductService,
+    CategoryService,
+    ProductImageService,
+    ProductRepositoryService,
+  ],
   controllers: [ProductController],
+  exports: [ProductRepositoryService],
 })
 export class ProductModule {}
