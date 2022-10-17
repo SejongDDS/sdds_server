@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { ORDER_STATUS, OrdersEntity } from "./entity/orders.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -6,6 +11,8 @@ import { CreateOrdersInput, CreateOrdersOutput } from "./dto/create-orders.dto";
 import { WebsiteService } from "../website/website.service";
 import { ProductRepositoryService } from "../product/product-repository.service";
 import { IPagination } from "../../common/pagination/pagination.interface";
+import { UpdateOrdersInput, UpdateOrdersOutput } from "./dto/update-orders.dto";
+import { DeleteOrdersOutput } from "./dto/delete-orders.dto";
 
 @Injectable()
 export class OrdersService {
@@ -134,6 +141,86 @@ export class OrdersService {
         ok: false,
         error: e,
       };
+    }
+  }
+
+  /**
+   * 주문 업데이트
+   * @param userId
+   * @param orderId
+   * @param input
+   */
+  async updateOrder(
+    userId: number,
+    orderId: number,
+    input: UpdateOrdersInput
+  ): Promise<UpdateOrdersOutput> {
+    try {
+      const order = await this.ordersRepository.findOne({
+        where: {
+          id: orderId,
+          website: {
+            owner: {
+              id: userId,
+            },
+          },
+        },
+      });
+
+      if (!order) {
+        return {
+          ok: false,
+          error: "Not Found Order or Can't Access this Order",
+        };
+      }
+
+      const updatedOrder = this.ordersRepository.create({
+        ...order,
+        ...input,
+      });
+
+      await this.ordersRepository.save(updatedOrder);
+
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      this.logger.error(e);
+    }
+  }
+
+  async deleteOrder(
+    userId: number,
+    orderId: number
+  ): Promise<DeleteOrdersOutput> {
+    try {
+      const order = await this.ordersRepository.findOne({
+        where: {
+          id: orderId,
+        },
+        relations: ["website", "website.owner"],
+      });
+
+      if (!order) {
+        return {
+          ok: false,
+          error: new NotFoundException(),
+        };
+      }
+
+      if (order.website.owner_id !== userId) {
+        return {
+          ok: false,
+          error: new UnauthorizedException(),
+        };
+      }
+
+      await this.ordersRepository.delete(order.id);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      this.logger.error(e);
     }
   }
 }

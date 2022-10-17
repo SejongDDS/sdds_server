@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -10,13 +11,21 @@ import {
   Req,
   UseGuards,
 } from "@nestjs/common";
-import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger";
 import { CreateOrdersInput, CreateOrdersOutput } from "./dto/create-orders.dto";
 import { OrdersService } from "./orders.service";
 import { JwtGuard } from "../auth/guards/jwt.guard";
 import { IPagination } from "../../common/pagination/pagination.interface";
 import { DocumentPagination } from "../../common/pagination/pagination.decorator";
 import { OrdersEntity } from "./entity/orders.entity";
+import { UpdateOrdersInput, UpdateOrdersOutput } from "./dto/update-orders.dto";
+import { DeleteOrdersOutput } from "./dto/delete-orders.dto";
 
 @Controller("orders")
 @ApiTags("주문 API")
@@ -31,6 +40,7 @@ export class OrdersController {
    */
   @Get("/:website_url")
   @UseGuards(JwtGuard)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "주문 전체 조회 API",
   })
@@ -54,6 +64,7 @@ export class OrdersController {
    */
   @Get("/:website_url/:order_id")
   @UseGuards(JwtGuard)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: "주문 조회 API",
   })
@@ -87,5 +98,51 @@ export class OrdersController {
     @Body() input: CreateOrdersInput
   ): Promise<CreateOrdersOutput> {
     return await this.ordersService.createOrders(input);
+  }
+
+  /**
+   * 주문 업데이트
+   * @param req
+   * @param orderId
+   * @param input
+   */
+  @Post("/:order_id")
+  @UseGuards(JwtGuard)
+  @ApiOperation({
+    summary: "주문 업데이트 API",
+    description: "Body 는 하단에 UpdateOrdersInput 참고",
+  })
+  @ApiBody({
+    type: UpdateOrdersInput,
+  })
+  @ApiOkResponse({
+    type: UpdateOrdersOutput,
+  })
+  @ApiBearerAuth()
+  async updateOrder(
+    @Req() req,
+    @Param("order_id") orderId,
+    @Body() input: UpdateOrdersInput
+  ): Promise<UpdateOrdersOutput> {
+    const { user_id } = req.user;
+    return await this.ordersService.updateOrder(user_id, orderId, input);
+  }
+
+  @Delete("/:order_id")
+  @UseGuards(JwtGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "주문 삭제 API",
+  })
+  @ApiOkResponse({
+    type: DeleteOrdersOutput,
+  })
+  async deleteOrder(
+    @Req() req,
+    @Param("order_id") orderId
+  ): Promise<DeleteOrdersOutput> {
+    const { user_id } = req.user;
+    return await this.ordersService.deleteOrder(user_id, orderId);
   }
 }
