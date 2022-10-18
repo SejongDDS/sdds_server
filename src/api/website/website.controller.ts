@@ -13,6 +13,7 @@ import { JwtGuard } from "../auth/guards/jwt.guard";
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiHeaders,
   ApiOperation,
   ApiTags,
 } from "@nestjs/swagger";
@@ -45,6 +46,12 @@ export class WebsiteController {
   @Get()
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "내 웹사이트 전체 조회",
+    description:
+      "내 소유 전체 웹사이트 조회 // Bearer Token 만 담아서 보내면 됩니다.",
+  })
+  @ApiBearerAuth()
   async getMyWebsites(@Req() req) {
     const { user_id } = req.user;
     return await this.websiteService.getMyWebsites(user_id);

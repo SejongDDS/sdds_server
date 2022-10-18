@@ -9,9 +9,10 @@ import {
 } from "@nestjs/common";
 import { MemberService } from "./member.service";
 import { SignUpInput } from "./dto/sign-up.dto";
-import { ApiBody, ApiOperation, ApiParam } from "@nestjs/swagger";
+import { ApiBody, ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
 
 @Controller("member")
+@ApiTags("Member API")
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
 
