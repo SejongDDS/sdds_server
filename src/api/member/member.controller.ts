@@ -1,16 +1,20 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Logger,
   Param,
   Post,
+  Req,
+  UseGuards,
 } from "@nestjs/common";
 import { MemberService } from "./member.service";
 import { SignUpInput, SignUpOutput } from "./dto/sign-up.dto";
 import {
   ApiAcceptedResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -20,14 +24,65 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import * as Http from "http";
 import { LoginInput, LoginOutput } from "./dto/login.dto";
+import { JwtGuard } from "../auth/guards/jwt.guard";
+import { GetMemberOutput, GetMembersOutput } from "./dto/get-member";
 
 @Controller("member")
 @ApiTags("Member API")
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
+
+  @Get("all/:website_url")
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "전체 회원 조회 API",
+  })
+  @ApiUnauthorizedResponse({
+    description: "해당 웹사이트 권한이 없을 때",
+  })
+  @ApiNotFoundResponse({
+    description: "해당 웹사이트가 존재하지 않을 때",
+  })
+  @ApiOkResponse({
+    description: "멤버 목록 조회 성공",
+  })
+  @ApiResponse({
+    type: GetMembersOutput,
+  })
+  @UseGuards(JwtGuard)
+  async getMyMembers(@Param("website_url") websiteUrl, @Req() req) {
+    const { user_id } = req.user;
+    return await this.memberService.getMyMembers(websiteUrl, user_id);
+  }
+
+  @Get(":website_url/:member_id")
+  @UseGuards(JwtGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "회원 조회 API (1명)",
+  })
+  @ApiUnauthorizedResponse({
+    description: "해당 웹사이트 권한이 없을 때",
+  })
+  @ApiNotFoundResponse({
+    description: "해당 웹사이트가 존재하지 않을 때",
+  })
+  @ApiOkResponse({
+    description: "멤버 조회 성공",
+  })
+  @ApiResponse({
+    type: GetMemberOutput,
+  })
+  async getMember(@Req() req, @Param() param): Promise<GetMemberOutput> {
+    const { website_url, member_id } = param;
+    const { user_id } = req.user;
+    return await this.memberService.getMember(user_id, website_url, member_id);
+  }
 
   @Post("sign-up/:website_url/")
   @HttpCode(HttpStatus.CREATED)

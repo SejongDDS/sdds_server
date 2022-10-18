@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MemberEntity } from "./entity/member.entity";
 import { Repository } from "typeorm";
@@ -6,6 +11,7 @@ import { SignUpInput, SignUpOutput } from "./dto/sign-up.dto";
 import { WebsiteService } from "../website/website.service";
 import { LoginInput, LoginOutput } from "./dto/login.dto";
 import * as bcrypt from "bcrypt";
+import { GetMemberOutput, GetMembersOutput } from "./dto/get-member";
 
 @Injectable()
 export class MemberService {
@@ -16,6 +22,80 @@ export class MemberService {
   ) {}
 
   private readonly logger = new Logger(MemberService.name);
+
+  async getMyMembers(
+    websiteUrl: string,
+    userId: number
+  ): Promise<GetMembersOutput> {
+    try {
+      const website = await this.websiteService.findWebsiteByUrl(websiteUrl);
+      if (!website) {
+        return {
+          ok: false,
+          error: new NotFoundException(),
+          statusCode: 202,
+        };
+      }
+
+      if (userId !== website.owner_id) {
+        return {
+          ok: false,
+          error: new UnauthorizedException(),
+          statusCode: 401,
+        };
+      }
+
+      return {
+        ok: true,
+        statusCode: 200,
+        members: website.members,
+      };
+    } catch (e) {
+      this.logger.error(e);
+    }
+  }
+
+  async getMember(
+    userId: number,
+    websiteUrl: string,
+    memberId: number
+  ): Promise<GetMemberOutput> {
+    try {
+      const website = await this.websiteService.findWebsiteByUrl(websiteUrl);
+      if (!website) {
+        return {
+          ok: false,
+          error: new NotFoundException(),
+          statusCode: 202,
+        };
+      }
+
+      if (userId !== website.owner_id) {
+        return {
+          ok: false,
+          error: new UnauthorizedException(),
+          statusCode: 401,
+        };
+      }
+
+      const member = website.members.find((member) => member.id === +memberId);
+      if (!member) {
+        return {
+          ok: false,
+          error: new NotFoundException(),
+          statusCode: 404,
+        };
+      }
+
+      return {
+        ok: true,
+        statusCode: 200,
+        member: member,
+      };
+    } catch (e) {
+      this.logger.error(e);
+    }
+  }
 
   async signUp(input: SignUpInput, websiteUrl: string): Promise<SignUpOutput> {
     try {
