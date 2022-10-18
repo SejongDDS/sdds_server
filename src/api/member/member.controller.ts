@@ -8,17 +8,21 @@ import {
   Post,
 } from "@nestjs/common";
 import { MemberService } from "./member.service";
-import { SignUpInput } from "./dto/sign-up.dto";
+import { SignUpInput, SignUpOutput } from "./dto/sign-up.dto";
 import {
+  ApiAcceptedResponse,
   ApiBody,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
 import * as Http from "http";
-import { LoginInput } from "./dto/login.dto";
+import { LoginInput, LoginOutput } from "./dto/login.dto";
 
 @Controller("member")
 @ApiTags("Member API")
@@ -37,7 +41,10 @@ export class MemberController {
   @ApiParam({
     name: "website_url",
   })
-  @ApiNoContentResponse({
+  @ApiResponse({
+    type: SignUpOutput,
+  })
+  @ApiAcceptedResponse({
     description: "이미 사용 중인 아이디인 경우",
   })
   @ApiCreatedResponse({
@@ -49,8 +56,23 @@ export class MemberController {
 
   @Post("login/:website_url")
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "로그인 API (배포된 웹사이트)",
+  })
   @ApiBody({
     type: LoginInput,
+  })
+  @ApiResponse({
+    type: LoginOutput,
+  })
+  @ApiAcceptedResponse({
+    description: "비밀번호가 일치하지 않을 경우",
+  })
+  @ApiOkResponse({
+    description: "로그인 성공",
+  })
+  @ApiNotFoundResponse({
+    description: "해당하는 아이디의 회원을 찾지 못했을 때",
   })
   async login(@Param("website_url") website_url, @Body() input: LoginInput) {
     return await this.memberService.login(website_url, input);
