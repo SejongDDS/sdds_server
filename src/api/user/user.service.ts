@@ -26,6 +26,7 @@ export class UserService {
       if (user) {
         return {
           ok: false,
+          statusCode: 202,
           error: "Already Exists User",
         };
       }
@@ -38,6 +39,7 @@ export class UserService {
     } catch (e) {
       return {
         ok: false,
+        statusCode: 500,
         error: e,
       };
     }

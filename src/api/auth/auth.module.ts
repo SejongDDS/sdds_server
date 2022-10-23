@@ -7,9 +7,11 @@ import { JwtModule, JwtService } from "@nestjs/jwt";
 import { JwtStrategy } from "./strategy/jwt.strategy";
 import { JwtRefreshStrategy } from "./strategy/jwt-refresh.strategy";
 import { UserModule } from "../user/user.module";
+import { AuthController } from "./auth.controller";
 
 @Module({
   imports: [UserModule, PassportModule, JwtModule.register({})],
+  controllers: [AuthController],
   providers: [
     AuthService,
     AuthResolver,

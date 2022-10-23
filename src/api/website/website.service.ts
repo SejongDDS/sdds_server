@@ -27,6 +27,7 @@ export class WebsiteService {
       website.owner = user;
       website.products = [];
       website.orders = [];
+      website.members = [];
 
       const newWebsite = await this.websiteRepository.save(website);
       this.logger.verbose(`create New Website ${JSON.stringify(newWebsite)}`);
@@ -50,7 +51,7 @@ export class WebsiteService {
         },
       },
 
-      relations: ["owner", "products", "orders"],
+      relations: ["owner", "products", "orders", "members"],
     });
 
     if (website.length === 0) {
@@ -68,14 +69,13 @@ export class WebsiteService {
       where: {
         website_url: url,
       },
-      relations: ["owner", "products", "orders"],
+      relations: ["owner", "products", "orders", "members"],
     });
 
     return website;
   }
 
   async updateWebsiteEntity(website: WebsiteEntity) {
-    console.log(website);
     return await this.websiteRepository.save(website);
   }
 }

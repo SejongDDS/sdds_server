@@ -19,6 +19,8 @@ import { UserDeploy } from "./api/user/entity/user_deploy.entity";
 import { UserModule } from "./api/user/user.module";
 import { OrdersModule } from "./api/orders/orders.module";
 import { OrdersEntity } from "./api/orders/entity/orders.entity";
+import { MemberEntity } from "./api/member/entity/member.entity";
+import { MemberModule } from "./api/member/member.module";
 
 @Module({
   imports: [
@@ -49,6 +51,7 @@ import { OrdersEntity } from "./api/orders/entity/orders.entity";
         CategoryEntity,
         WebsiteEntity,
         OrdersEntity,
+        MemberEntity,
       ],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -68,6 +71,7 @@ import { OrdersEntity } from "./api/orders/entity/orders.entity";
     ProductModule,
     WebsiteModule,
     OrdersModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

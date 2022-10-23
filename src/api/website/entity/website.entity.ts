@@ -4,6 +4,7 @@ import { ProductEntity } from "../../product/entity/product.entity";
 import { User } from "../../user/entity/user.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { OrdersEntity } from "../../orders/entity/orders.entity";
+import { MemberEntity } from "../../member/entity/member.entity";
 
 @Entity()
 export class WebsiteEntity extends Core {
@@ -37,4 +38,13 @@ export class WebsiteEntity extends Core {
 
   @RelationId((self: WebsiteEntity) => self.orders)
   orders_id: number;
+
+  @OneToMany((type) => MemberEntity, (member) => member.website, {
+    cascade: true,
+    nullable: true,
+  })
+  members: MemberEntity[];
+
+  @RelationId((self: WebsiteEntity) => self.members)
+  members_id: number[];
 }
