@@ -6,7 +6,9 @@ import {
   HttpStatus,
   Post,
   Req,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { WebsiteService } from "./website.service";
 import { JwtGuard } from "../auth/guards/jwt.guard";
@@ -18,6 +20,8 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { CreateWebsiteInput, CreateWebsiteOutput } from "./website.interface";
+import { FileFieldsInterceptor } from "@nestjs/platform-express";
+import { UploadFiles } from "../product/product.interface";
 
 @Controller("website")
 @ApiTags("웹사이트 API")
@@ -27,6 +31,12 @@ export class WebsiteController {
 
   @Post()
   @UseGuards(JwtGuard)
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: "html", maxCount: 10 },
+      { name: "css", maxCount: 10 },
+    ])
+  )
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: "웹사이트 생성 API",
@@ -38,9 +48,18 @@ export class WebsiteController {
   })
   async createWebsite(
     @Req() req,
-    @Body() input: CreateWebsiteInput
+    @Body() input: CreateWebsiteInput,
+    @UploadedFiles()
+    files: {
+      html: Express.Multer.File[];
+      css: Express.Multer.File[];
+    }
   ): Promise<CreateWebsiteOutput> {
-    return await this.websiteService.createWebsite(req.user.user_id, input);
+    return await this.websiteService.createWebsite(
+      req.user.user_id,
+      files,
+      input
+    );
   }
 
   @Get()
