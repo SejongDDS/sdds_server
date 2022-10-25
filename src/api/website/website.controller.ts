@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Req,
   UploadedFiles,
@@ -16,12 +17,13 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiHeaders,
+  ApiOkResponse,
   ApiOperation,
+  ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
 import { CreateWebsiteInput, CreateWebsiteOutput } from "./website.interface";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
-import { UploadFiles } from "../product/product.interface";
 
 @Controller("website")
 @ApiTags("웹사이트 API")
@@ -74,5 +76,19 @@ export class WebsiteController {
   async getMyWebsites(@Req() req) {
     const { user_id } = req.user;
     return await this.websiteService.getMyWebsites(user_id);
+  }
+
+  @Get("/check/:website-url")
+  @ApiOperation({
+    summary: "웹사이트 URL 중복 검사",
+    description: "중복이면 true, 중복이 아니면 false 반환",
+  })
+  @ApiOkResponse({
+    schema: {
+      example: true,
+    },
+  })
+  async isDuplicateOfWebsite(@Param("website-url") websiteUrl: string) {
+    return await this.websiteService.isDuplicateOfWebsite(websiteUrl);
   }
 }

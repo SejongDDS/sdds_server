@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { WebsiteEntity } from "./entity/website.entity";
 import { Repository } from "typeorm";
@@ -68,6 +73,23 @@ export class WebsiteService {
     }
 
     return website;
+  }
+
+  async isDuplicateOfWebsite(websiteUrl: string) {
+    try {
+      const website = this.findWebsiteByUrl(websiteUrl);
+      if (website) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      this.logger.error(e);
+      return {
+        ok: false,
+        error: new InternalServerErrorException(),
+      };
+    }
   }
 
   async findWebsiteByUrl(url: string): Promise<WebsiteEntity> {
