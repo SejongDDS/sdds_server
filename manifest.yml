@@ -1,5 +1,7 @@
 applications:
-  - name: cf-nodejs
+  - name: sdds_server
     memory: 512M
     instances: 1
     random-route: true
+    path: ./
+    command: npm run build && npm run start
