@@ -1,9 +1,19 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { WebsiteEntity } from "./entity/website.entity";
 import { Repository } from "typeorm";
-import { CreateWebsiteInput, CreateWebsiteOutput } from "./website.interface";
+import {
+  CreateWebsiteInput,
+  CreateWebsiteOutput,
+  UploadWebsiteFiles,
+} from "./website.interface";
 import { UserService } from "../user/user.service";
+import { getS3Instance } from "../../modules/s3";
 
 @Injectable()
 export class WebsiteService {
@@ -17,6 +27,7 @@ export class WebsiteService {
   // todo : 웹사이트 파일 추가
   async createWebsite(
     userId: number,
+    files: UploadWebsiteFiles,
     input: CreateWebsiteInput
   ): Promise<CreateWebsiteOutput> {
     try {
@@ -28,7 +39,7 @@ export class WebsiteService {
       website.products = [];
       website.orders = [];
       website.members = [];
-
+      await this.uploadWebsiteFiles(files, input.website_url);
       const newWebsite = await this.websiteRepository.save(website);
       this.logger.verbose(`create New Website ${JSON.stringify(newWebsite)}`);
       return {
@@ -64,6 +75,23 @@ export class WebsiteService {
     return website;
   }
 
+  async isDuplicateOfWebsite(websiteUrl: string) {
+    try {
+      const website = this.findWebsiteByUrl(websiteUrl);
+      if (website) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      this.logger.error(e);
+      return {
+        ok: false,
+        error: new InternalServerErrorException(),
+      };
+    }
+  }
+
   async findWebsiteByUrl(url: string): Promise<WebsiteEntity> {
     const website = await this.websiteRepository.findOne({
       where: {
@@ -77,5 +105,38 @@ export class WebsiteService {
 
   async updateWebsiteEntity(website: WebsiteEntity) {
     return await this.websiteRepository.save(website);
+  }
+
+  async uploadWebsiteFiles(files: UploadWebsiteFiles, websiteUrl: string) {
+    const s3 = getS3Instance();
+    const { html, css } = files;
+    html.map(async (file) => {
+      const payload = {
+        Bucket: `sdds/${websiteUrl}`,
+        Key: file.originalname,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
+
+      await s3.upload(payload, (err, data) => {
+        if (err) {
+          throw err;
+        }
+      });
+    });
+    css.map(async (file) => {
+      const payload = {
+        Bucket: `sdds/${websiteUrl}/css`,
+        Key: file.originalname,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
+
+      await s3.upload(payload, (err, data) => {
+        if (err) {
+          throw err;
+        }
+      });
+    });
   }
 }

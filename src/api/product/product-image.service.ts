@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ProductImageEntity } from "./entity/image.entity";
 import { Repository } from "typeorm";
 import { UploadFiles, UploadImageToS3Output } from "./product.interface";
-import { S3 } from "aws-sdk";
+import { getS3Instance } from "../../modules/s3";
 
 @Injectable()
 export class ProductImageService {
@@ -27,10 +27,10 @@ export class ProductImageService {
 
   async uploadImage(files: UploadFiles, websiteUrl: string) {
     let url: string;
-    const s3 = this.getS3();
+    const s3 = getS3Instance();
     const mainImage = files.main_image[0].originalname;
     const payload = {
-      Bucket: `sdds/${websiteUrl}`,
+      Bucket: `sdds/${websiteUrl}/products`,
       Key: mainImage,
       Body: files.main_image[0].buffer,
     };
@@ -52,14 +52,5 @@ export class ProductImageService {
 
   async updateImageEntity(productImageEntity: ProductImageEntity) {
     return await this.imageRepository.save(productImageEntity);
-  }
-
-  getS3(): S3 {
-    return new S3({
-      credentials: {
-        accessKeyId: `${process.env.ACCESS_ID}`,
-        secretAccessKey: `${process.env.SECRET_ACCESS_KEY}`,
-      },
-    });
   }
 }

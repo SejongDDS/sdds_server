@@ -11,3 +11,11 @@ export class CreateWebsiteInput {
 }
 
 export class CreateWebsiteOutput extends CoreOutput {}
+
+export class UploadWebsiteFiles {
+  @ApiProperty({ description: "html file" })
+  html: Express.Multer.File[];
+
+  @ApiProperty({ description: "css file" })
+  css: Express.Multer.File[];
+}
