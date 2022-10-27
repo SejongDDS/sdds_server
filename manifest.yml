@@ -1,7 +1,7 @@
 applications:
-  - name: sdds_server
+  - name: sdds
     memory: 512M
     instances: 1
-    random-route: true
     path: ./
     command: npm run build && npm run start
+
