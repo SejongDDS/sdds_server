@@ -11,6 +11,17 @@ export enum ORDER_STATUS {
   COMPLETED,
 }
 
+export enum ORDER_CHECK {
+  NOT_YET,
+  CHECKED,
+}
+
+export enum ORDER_CANCEL {
+  NO_CANCEL,
+  NOT_YET,
+  DONE,
+}
+
 @Entity()
 export class OrdersEntity extends Core {
   @Column({ type: "enum", enum: ORDER_STATUS })
@@ -28,6 +39,14 @@ export class OrdersEntity extends Core {
   @Column({ type: "json", nullable: true })
   @ApiProperty({ type: "json | null", description: "기타 정보" })
   etc?: any;
+
+  @Column({ type: "enum", enum: ORDER_CHECK })
+  @ApiProperty({ type: "enum", enum: ORDER_CHECK })
+  order_check: ORDER_CHECK;
+
+  @Column({ type: "enum", enum: ORDER_CANCEL })
+  @ApiProperty({ type: "enum", enum: ORDER_CANCEL })
+  order_cancel: ORDER_CANCEL;
 
   @ManyToOne((type) => ProductEntity, (product) => product.orders, {
     onDelete: "CASCADE",

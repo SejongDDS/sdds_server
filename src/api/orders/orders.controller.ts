@@ -26,6 +26,7 @@ import { DocumentPagination } from "../../common/pagination/pagination.decorator
 import { OrdersEntity } from "./entity/orders.entity";
 import { UpdateOrdersInput, UpdateOrdersOutput } from "./dto/update-orders.dto";
 import { DeleteOrdersOutput } from "./dto/delete-orders.dto";
+import * as Http from "http";
 
 @Controller("orders")
 @ApiTags("주문 API")
@@ -98,6 +99,15 @@ export class OrdersController {
     @Body() input: CreateOrdersInput
   ): Promise<CreateOrdersOutput> {
     return await this.ordersService.createOrders(input);
+  }
+
+  @Post("/cancel/:order_id")
+  @ApiOperation({
+    summary: "취소 요청 API",
+  })
+  @HttpCode(HttpStatus.OK)
+  async requestCancelOrder(@Param("order_id") orderId: number) {
+    return await this.ordersService.requestCancelOrder(orderId);
   }
 
   /**

@@ -4,7 +4,12 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
-import { ORDER_STATUS, OrdersEntity } from "./entity/orders.entity";
+import {
+  ORDER_CANCEL,
+  ORDER_CHECK,
+  ORDER_STATUS,
+  OrdersEntity,
+} from "./entity/orders.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateOrdersInput, CreateOrdersOutput } from "./dto/create-orders.dto";
@@ -83,6 +88,12 @@ export class OrdersService {
         relations: ["product", "buyer"],
       });
 
+      if (orders) {
+        await this.ordersRepository.update(orders.id, {
+          order_check: ORDER_CHECK.CHECKED,
+        });
+      }
+
       return orders;
     } catch (e) {
       this.logger.error(e);
@@ -119,6 +130,8 @@ export class OrdersService {
 
       const newOrder = await this.ordersRepository.create({
         order_status: ORDER_STATUS.PENDING,
+        order_check: ORDER_CHECK.NOT_YET,
+        order_cancel: ORDER_CANCEL.NO_CANCEL,
         count: input.count,
         shipping_address: input.shipping_address,
         product: product,
@@ -141,6 +154,22 @@ export class OrdersService {
         ok: false,
         error: e,
       };
+    }
+  }
+
+  async requestCancelOrder(orderId: number) {
+    try {
+      const order = await this.ordersRepository.findOne({
+        where: {
+          id: orderId,
+        },
+      });
+      await this.ordersRepository.update(order.id, {
+        order_cancel: ORDER_CANCEL.NOT_YET,
+      });
+      return;
+    } catch (e) {
+      this.logger.error(e);
     }
   }
 
