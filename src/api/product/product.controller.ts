@@ -108,7 +108,7 @@ export class ProductController {
   @ApiBearerAuth()
   @UseInterceptors(
     FileFieldsInterceptor([
-      { name: "main_image", maxCount: 1 },
+      { name: "main_image", maxCount: 5 },
       { name: "thumbnail_image", maxCount: 1 },
     ])
   )
