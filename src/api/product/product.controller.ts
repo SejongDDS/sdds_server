@@ -73,6 +73,37 @@ export class ProductController {
     return await this.productService.getProducts(url, options);
   }
 
+  @Get("/:website_url/summary")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "상품 요약 정보 조회 API",
+    description: "상품 목록에 띄울 데이터 List",
+  })
+  @ApiParam({
+    name: "website_url",
+  })
+  @DocumentPagination()
+  @ApiOkResponse({
+    description: `return type is 
+    [
+      {
+        id: number,
+        name: string, 
+        price: number,
+        count: number, 
+        main_url: string,
+        thumbnail_url: string
+      }
+    ]
+    `,
+  })
+  async getProductsSummary(
+    @Param("website_url") websiteUrl,
+    @Query() query: IPagination
+  ) {
+    return await this.productService.getProductsSummary(websiteUrl, query);
+  }
+
   /**
    * 상품 1개 조회
    * @param url

@@ -45,7 +45,7 @@ export class ProductService {
             website_url: websiteUrl,
           },
         },
-        relations: ["website", "orders"],
+        relations: ["website", "orders", "image", "category"],
         order: {
           created_at: order,
         },
@@ -54,6 +54,40 @@ export class ProductService {
       });
 
       return product;
+    } catch (e) {
+      this.logger.error(e);
+    }
+  }
+
+  async getProductsSummary(url: string, options: IPagination) {
+    try {
+      const products = await this.productRepository.find({
+        where: {
+          website: {
+            website_url: url,
+          },
+        },
+        relations: ["image", "category"],
+        order: {
+          created_at: options.order,
+        },
+        skip: options.skip,
+        take: options.take,
+        select: ["id", "name", "price", "count", "image"],
+      });
+
+      const result = [];
+      products.map((product) => {
+        result.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          count: product.count,
+          main_url: product.image.main_url,
+          thumbnail_url: product.image.thumbnail_url,
+        });
+      });
+      return result;
     } catch (e) {
       this.logger.error(e);
     }
