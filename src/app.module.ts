@@ -28,12 +28,8 @@ import { MemberModule } from "./api/member/member.module";
       isGlobal: true,
       cache: true,
       envFilePath:
-        process.env.NODE_ENV === "dev" ? ".development.env" : ".test.env",
-      ignoreEnvFile: process.env.NODE_ENV === "prod" ?? false,
-      validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid("dev", "prod").required(),
-        DATABASE_HOST: Joi.string().required(),
-      }),
+        process.env.NODE_ENV === "dev" ? ".development.env" : ".production.env",
+      validationSchema: Joi.object({}),
     }),
     TypeOrmModule.forRoot({
       type: "mysql",

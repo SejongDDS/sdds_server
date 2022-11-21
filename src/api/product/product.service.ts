@@ -222,13 +222,14 @@ export class ProductService {
     input: UpdateProductInput
   ): Promise<UpdateProductOutput> {
     try {
-      const { website_url, ...updateInput } = input;
+      const { website_url, category_name, ...updateInput } = input;
       const website = await this.websiteService.findWebsiteByUrl(website_url);
 
       if (!website || (website && website.owner_id !== userId)) {
         return {
           ok: false,
-          error: "You can't access this website's product",
+          error:
+            "You can't access this website's product Or must Insert value Of website_url",
         };
       }
 
@@ -252,7 +253,6 @@ export class ProductService {
         ...product,
         ...updateInput,
       });
-
       await this.productRepository.save(newProduct);
       return {
         ok: true,

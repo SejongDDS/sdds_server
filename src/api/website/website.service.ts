@@ -93,7 +93,10 @@ export class WebsiteService {
   }
 
   async findWebsiteByUrl(url: string): Promise<WebsiteEntity> {
-    const website = await this.websiteRepository.findOne({
+    if (!url) {
+      return undefined;
+    }
+    const website = await this.websiteRepository.findOneOrFail({
       where: {
         website_url: url,
       },
