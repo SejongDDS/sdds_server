@@ -4,6 +4,7 @@ import { ProductImageEntity } from "./entity/image.entity";
 import { Repository } from "typeorm";
 import { UploadFiles, UploadImageToS3Output } from "./product.interface";
 import { getS3Instance } from "../../modules/s3";
+import { rejects } from "assert";
 
 @Injectable()
 export class ProductImageService {
@@ -15,39 +16,72 @@ export class ProductImageService {
   private readonly logger = new Logger(ProductImageService.name);
 
   // todo : aws 이미지 업로드
-  async createImage(files: UploadFiles, websiteUrl: string) {
-    const imageUrl = await this.uploadImage(files, websiteUrl).then((res) => {
-      return res;
-    });
-    const newImage = this.imageRepository.create({
-      main_url: imageUrl,
-    });
-    return await this.imageRepository.save(newImage);
+  async createImage(
+    files: UploadFiles,
+    websiteUrl: string,
+    productName: string
+  ) {
+    try {
+      const { main_url, thumbnail_url } = await this.uploadImageAndGetUrl(
+        files,
+        websiteUrl,
+        productName
+      );
+      const newImage = this.imageRepository.create({
+        main_url,
+        thumbnail_url,
+        start: 0,
+        end: files.main_image.length - 1,
+      });
+      return await this.imageRepository.save(newImage);
+    } catch (e) {
+      this.logger.error("createImage : ", e);
+    }
   }
 
-  async uploadImage(files: UploadFiles, websiteUrl: string) {
-    let url: string;
+  // todo : 이미지 업로드 수정
+  async uploadImageAndGetUrl(
+    files: UploadFiles,
+    websiteUrl: string,
+    productName: string
+  ) {
     const s3 = getS3Instance();
-    const mainImage = files.main_image[0].originalname;
-    const payload = {
-      Bucket: `sdds/${websiteUrl}/products`,
-      Key: mainImage,
-      Body: files.main_image[0].buffer,
-    };
+    const mainImageUrl = `https://sdds.s3.ap-northeast-2.amazonaws.com/example/products/${productName}/main_image`;
+    const thumbnailImageUrl = `https://sdds.s3.ap-northeast-2.amazonaws.com/example/products/${productName}/thumbnail_image`;
 
-    return new Promise((resolve, reject) => {
-      s3.upload(payload, (err, data: UploadImageToS3Output) => {
+    files.main_image.map(async (image, index) => {
+      const payload = {
+        Bucket: `sdds/${websiteUrl}/products/${productName}/main_image`,
+        Key: `${index}.png`,
+        Body: image.buffer,
+      };
+      await s3.upload(payload, (err, data: UploadImageToS3Output) => {
         if (err) {
-          reject(err);
+          this.logger.error("error of uploading thumbnail_image : ", err);
           throw err;
         }
-
-        url = data.Location;
-        resolve(url);
       });
-    }).then((res) => {
-      return url;
     });
+
+    console.log(files.thumbnail_image);
+    files.thumbnail_image.map(async (image, index) => {
+      const payload = {
+        Bucket: `sdds/${websiteUrl}/products/${productName}/thumbnail_image`,
+        Key: `${index}.png`,
+        Body: image.buffer,
+      };
+      await s3.upload(payload, (err, data: UploadImageToS3Output) => {
+        if (err) {
+          this.logger.error("error of uploading thumbnail_image : ", err);
+          throw err;
+        }
+      });
+    });
+
+    return {
+      main_url: mainImageUrl,
+      thumbnail_url: thumbnailImageUrl,
+    };
   }
 
   async updateImageEntity(productImageEntity: ProductImageEntity) {

@@ -7,7 +7,7 @@ import { ApiProperty } from "@nestjs/swagger";
 export class ProductImageEntity extends Core {
   @Column("varchar", { nullable: true })
   @ApiProperty()
-  thumbnail_url?: string;
+  thumbnail_url: string;
 
   @Column("varchar", { nullable: true })
   @ApiProperty()
@@ -18,6 +18,12 @@ export class ProductImageEntity extends Core {
   })
   @JoinColumn()
   product?: ProductEntity;
+
+  @Column({ nullable: true })
+  start: number;
+
+  @Column({ nullable: true })
+  end: number;
 
   @RelationId((self: ProductImageEntity) => self.product)
   product_id;

@@ -34,11 +34,17 @@ export class CreateProductInput {
 export class CreateProductOutput extends CoreOutput {}
 
 export class UploadFiles {
+  /**
+   * 최대 5장 들어올 수 있음
+   */
   @ApiProperty({ description: "메인 상품 이미지" })
   main_image: Express.Multer.File[];
 
+  /**
+   * 최대 1장 들어올 수 있음
+   */
   @ApiProperty({ description: "썸네일 이미지" })
-  thumbnail_image?: Express.Multer.File[];
+  thumbnail_image: Express.Multer.File[];
 }
 
 export class UploadImageToS3Output {

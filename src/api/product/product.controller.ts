@@ -40,6 +40,11 @@ import { IPagination } from "../../common/pagination/pagination.interface";
 import { getDefaultQuery } from "../../common/pagination/pagination.util";
 import { ProductEntity } from "./entity/product.entity";
 import { DocumentPagination } from "../../common/pagination/pagination.decorator";
+import {
+  descriptionOfGetProducts,
+  descriptionOfProduct,
+  descriptionOfSummary,
+} from "./product.description";
 
 @Controller("product")
 @ApiTags("상품 API")
@@ -63,7 +68,9 @@ export class ProductController {
   })
   @DocumentPagination()
   @ApiOkResponse({
-    description: "Return Type is ProductEntity[]",
+    schema: {
+      example: descriptionOfGetProducts(),
+    },
   })
   async getAllProducts(
     @Param("website_url") url,
@@ -84,18 +91,9 @@ export class ProductController {
   })
   @DocumentPagination()
   @ApiOkResponse({
-    description: `return type is 
-    [
-      {
-        id: number,
-        name: string, 
-        price: number,
-        count: number, 
-        main_url: string,
-        thumbnail_url: string
-      }
-    ]
-    `,
+    schema: {
+      example: descriptionOfSummary(),
+    },
   })
   async getProductsSummary(
     @Param("website_url") websiteUrl,
@@ -121,7 +119,9 @@ export class ProductController {
     name: "product_id",
   })
   @ApiOkResponse({
-    type: ProductEntity,
+    schema: {
+      example: descriptionOfProduct(),
+    },
   })
   async getProduct(@Param("website_url") url, @Param("product_id") productId) {
     return await this.productService.getAProduct(url, productId);

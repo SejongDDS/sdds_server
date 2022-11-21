@@ -39,7 +39,7 @@ export class ProductService {
   ): Promise<ProductEntity[] | NotFoundException> {
     try {
       const { order, take, skip } = options;
-      const product = await this.productRepository.find({
+      const products = await this.productRepository.find({
         where: {
           website: {
             website_url: websiteUrl,
@@ -52,8 +52,20 @@ export class ProductService {
         skip: skip,
         take: take,
       });
-
-      return product;
+      const result = [];
+      products.map((product) => {
+        const { image, ...res } = product;
+        const mainImageUrl = [];
+        for (let i = 0; i <= product.image.end; i++) {
+          mainImageUrl.push(`${product.image.main_url}/${i}.png`);
+        }
+        result.push({
+          ...product,
+          main_url: mainImageUrl,
+          thumbnail_url: `${product.image.thumbnail_url}/0.png`,
+        });
+      });
+      return result;
     } catch (e) {
       this.logger.error(e);
     }
@@ -64,27 +76,30 @@ export class ProductService {
       const products = await this.productRepository.find({
         where: {
           website: {
-            website_url: url,
+            website_url: `${url}`,
           },
         },
-        relations: ["image", "category"],
+        relations: ["image", "category", "website"],
         order: {
           created_at: options.order,
         },
-        skip: options.skip,
-        take: options.take,
+        skip: options.skip ?? 0,
+        take: options.take ?? 10,
         select: ["id", "name", "price", "count", "image"],
       });
-
       const result = [];
       products.map((product) => {
+        const mainImageUrl = [];
+        for (let i = 0; i <= product.image.end; i++) {
+          mainImageUrl.push(`${product.image.main_url}/${i}.png`);
+        }
         result.push({
           id: product.id,
           name: product.name,
           price: product.price,
           count: product.count,
-          main_url: product.image.main_url,
-          thumbnail_url: product.image.thumbnail_url,
+          main_url: mainImageUrl,
+          thumbnail_url: `${product.image.thumbnail_url}/0.png`,
         });
       });
       return result;
@@ -108,8 +123,16 @@ export class ProductService {
       if (!product) {
         return new NotFoundException();
       }
-
-      return product;
+      const { image, website, ...result } = product;
+      const mainImageUrls = [];
+      for (let i = 0; i < product.image.end + 1; i++) {
+        mainImageUrls.push(`${product.image.main_url}/${i}.png`);
+      }
+      return {
+        ...result,
+        main_url: mainImageUrls,
+        thumbnail_url: `${product.image.thumbnail_url}/0.png`,
+      };
     } catch (e) {
       this.logger.error(e);
     }
@@ -146,7 +169,8 @@ export class ProductService {
 
       const image = await this.imageService.createImage(
         files,
-        input.website_url
+        input.website_url,
+        input.name
       );
 
       // 상품 생성
