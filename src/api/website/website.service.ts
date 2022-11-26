@@ -132,7 +132,7 @@ export class WebsiteService {
         Bucket: `sdds/${websiteUrl}/css`,
         Key: file.originalname,
         Body: file.buffer,
-        ContentType: file.mimetype,
+        ContentType: "text/css",
       };
 
       await s3.upload(payload, (err, data) => {
