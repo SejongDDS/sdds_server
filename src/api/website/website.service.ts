@@ -118,7 +118,7 @@ export class WebsiteService {
         Bucket: `sdds/${websiteUrl}`,
         Key: file.originalname,
         Body: file.buffer,
-        ContentType: file.mimetype,
+        ContentType:"text/html",
       };
 
       await s3.upload(payload, (err, data) => {
