@@ -115,10 +115,10 @@ export class WebsiteService {
     const { html, css } = files;
     html.map(async (file) => {
       const payload = {
-        Bucket: `sdds/${websiteUrl}`,
+        Bucket: `${process.env.BUCKET_NAME}/${websiteUrl}`,
         Key: file.originalname,
         Body: file.buffer,
-        ContentType:"text/html",
+        ContentType: "text/html",
       };
 
       await s3.upload(payload, (err, data) => {
@@ -129,7 +129,7 @@ export class WebsiteService {
     });
     css.map(async (file) => {
       const payload = {
-        Bucket: `sdds/${websiteUrl}/css`,
+        Bucket: `${process.env.BUCKET_NAME}/${websiteUrl}/css`,
         Key: file.originalname,
         Body: file.buffer,
         ContentType: "text/css",
