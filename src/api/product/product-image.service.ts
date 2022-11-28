@@ -46,10 +46,8 @@ export class ProductImageService {
     productName: string
   ) {
     const s3 = getS3Instance();
-    console.log(s3);
-    const mainImageUrl = `https://sdds.s3.ap-northeast-2.amazonaws.com/${websiteUrl}/products/${productName}/main_image`;
-    const thumbnailImageUrl = `https://sdds.s3.ap-northeast-2.amazonaws.com/${websiteUrl}/products/${productName}/thumbnail_image`;
-
+    const mainImageUrl = `https://s3.ap-northeast-2.amazonaws.com/${process.env.BUCKET_NAME}/${websiteUrl}/products/${productName}/main_image`;
+    const thumbnailImageUrl = `https://s3.ap-northeast-2.amazonaws.com/${process.env.BUCKET_NAME}/${websiteUrl}/products/${productName}/thumbnail_image`;
     files.main_image.map(async (image, index) => {
       const payload = {
         Bucket: `${process.env.BUCKET_NAME}/${websiteUrl}/products/${productName}/main_image`,

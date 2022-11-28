@@ -3,8 +3,6 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { GraphQLModule } from "@nestjs/graphql";
-import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import * as Joi from "joi";
 import { JwtService } from "@nestjs/jwt";
 import { ProductEntity } from "./api/product/entity/product.entity";
@@ -30,6 +28,7 @@ import { MemberModule } from "./api/member/member.module";
       envFilePath:
         process.env.NODE_ENV === "dev" ? ".development.env" : ".production.env",
       validationSchema: Joi.object({}),
+      ignoreEnvFile: process.env.NODE_ENV == "production",
     }),
     TypeOrmModule.forRoot({
       type: "mysql",
@@ -49,18 +48,6 @@ import { MemberModule } from "./api/member/member.module";
         OrdersEntity,
         MemberEntity,
       ],
-    }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: true,
-      include: [UserModule, AuthModule],
-      cors: {
-        credentials: "include",
-        origin: "http://localhost",
-      },
-      context: ({ req, res }) => {
-        return { req, res };
-      },
     }),
     UserModule,
     AuthModule,
