@@ -78,7 +78,7 @@ export class WebsiteController {
     return await this.websiteService.getMyWebsites(user_id);
   }
 
-  @Get("/check/:website-url")
+  @Get("/check/:website_url")
   @ApiOperation({
     summary: "웹사이트 URL 중복 검사",
     description: "중복이면 true, 중복이 아니면 false 반환",
@@ -88,7 +88,7 @@ export class WebsiteController {
       example: true,
     },
   })
-  async isDuplicateOfWebsite(@Param("website-url") websiteUrl: string) {
+  async isDuplicateOfWebsite(@Param("website_url") websiteUrl: string) {
     return await this.websiteService.isDuplicateOfWebsite(websiteUrl);
   }
 }
