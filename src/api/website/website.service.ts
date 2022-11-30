@@ -74,7 +74,7 @@ export class WebsiteService {
 
   async isDuplicateOfWebsite(websiteUrl: string) {
     try {
-      const website = this.findWebsiteByUrl(websiteUrl);
+      const website = await this.findWebsiteByUrl(websiteUrl);
       if (website) {
         return true;
       }
@@ -93,7 +93,7 @@ export class WebsiteService {
     if (!url) {
       return undefined;
     }
-    const website = await this.websiteRepository.findOneOrFail({
+    const website = await this.websiteRepository.findOne({
       where: {
         website_url: url,
       },
