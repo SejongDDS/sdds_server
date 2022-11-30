@@ -66,10 +66,7 @@ export class WebsiteService {
     });
 
     if (website.length === 0) {
-      return {
-        ok: false,
-        error: new NotFoundException(),
-      };
+      return [];
     }
 
     return website;
